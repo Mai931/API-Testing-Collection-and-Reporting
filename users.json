@@ -1,0 +1,555 @@
+{
+	"info": {
+		"_postman_id": "4e0c8b52-f884-494b-8a1b-cf4556a191cc",
+		"name": "New Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "33400611"
+	},
+	"item": [
+		{
+			"name": "get all users",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//test status code\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"All objects in the response array are valid\", function () {\r",
+							"    // Parse the response as JSON\r",
+							"    var jsonData = pm.response.json();\r",
+							"    \r",
+							"    // Check that the response is an array\r",
+							"    pm.expect(jsonData).to.be.an('array');\r",
+							"    \r",
+							"    // Iterate over each object in the array\r",
+							"    jsonData.forEach(function(item) {\r",
+							"        // Check if the item is an object\r",
+							"        pm.expect(item).to.be.an('object');\r",
+							"\r",
+							"        // Check if the object has the expected properties\r",
+							"        pm.expect(item).to.have.property(\"id\");\r",
+							"        pm.expect(item).to.have.property(\"userName\");\r",
+							"        pm.expect(item).to.have.property(\"password\");\r",
+							"        \r",
+							"        // Ensure that id is a number and is an integer\r",
+							"        pm.expect(item.id).to.be.a('number');\r",
+							"        pm.expect(item.id % 1).to.eql(0); // Check that id is an integer\r",
+							"        \r",
+							"        // Ensure that name is a string\r",
+							"        pm.expect(item.userName).to.be.a('string');\r",
+							"        //Ensure that passWord is a string\r",
+							"        pm.expect(item.password).to.be.a('string');\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"packages": {},
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{URL}}/users",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "New Request",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/users",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8; v=1.0"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 12 Sep 2024 14:17:11 GMT"
+						},
+						{
+							"key": "Server",
+							"value": "Kestrel"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "api-supported-versions",
+							"value": "1.0"
+						}
+					],
+					"cookie": [],
+					"body": "[\n    {\n        \"id\": 1,\n        \"userName\": \"User 1\",\n        \"password\": \"Password1\"\n    },\n    {\n        \"id\": 2,\n        \"userName\": \"User 2\",\n        \"password\": \"Password2\"\n    },\n    {\n        \"id\": 3,\n        \"userName\": \"User 3\",\n        \"password\": \"Password3\"\n    },\n    {\n        \"id\": 4,\n        \"userName\": \"User 4\",\n        \"password\": \"Password4\"\n    },\n    {\n        \"id\": 5,\n        \"userName\": \"User 5\",\n        \"password\": \"Password5\"\n    },\n    {\n        \"id\": 6,\n        \"userName\": \"User 6\",\n        \"password\": \"Password6\"\n    },\n    {\n        \"id\": 7,\n        \"userName\": \"User 7\",\n        \"password\": \"Password7\"\n    },\n    {\n        \"id\": 8,\n        \"userName\": \"User 8\",\n        \"password\": \"Password8\"\n    },\n    {\n        \"id\": 9,\n        \"userName\": \"User 9\",\n        \"password\": \"Password9\"\n    },\n    {\n        \"id\": 10,\n        \"userName\": \"User 10\",\n        \"password\": \"Password10\"\n    }\n]"
+				}
+			]
+		},
+		{
+			"name": "add user",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"let id=Math.floor(Math.random()*1000)\r",
+							"pm.collectionVariables.set(\"id\", id);\r",
+							"var requestBody = pm.request.body.raw;\r",
+							"requestBody = requestBody.replace(\"{{id}}\", id);\r",
+							"pm.request.body.raw = requestBody;\r",
+							"\r",
+							"// Store the updated request body for later comparison\r",
+							"pm.environment.set(\"requestBody\", requestBody);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Content-Type is application/json\", function () {\r",
+							"    pm.response.to.have.header(\"Content-Type\");\r",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+							"});\r",
+							"pm.test(\"Response body matches request body\", function () {\r",
+							"    // Retrieve the stored request body\r",
+							"    var requestBody = pm.environment.get(\"requestBody\");\r",
+							"    \r",
+							"    // Parse the stored request body and the response body\r",
+							"    var parsedRequestBody = JSON.parse(requestBody);\r",
+							"    var responseBody = pm.response.json();\r",
+							"    \r",
+							"    // Remove the 'id' property from both objects for comparison if it's dynamically generated\r",
+							"    delete parsedRequestBody.id;\r",
+							"    delete responseBody.id;\r",
+							"    \r",
+							"    // Compare the remaining parts of the request and response bodies\r",
+							"    pm.expect(responseBody).to.deep.equal(parsedRequestBody);\r",
+							"    \r",
+							"    // Optionally, validate that the 'id' property exists and is a number\r",
+							"    pm.expect(pm.response.json()).to.have.property(\"id\").that.is.a('number');\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {\r\n    \"id\": {{id}},\r\n    \"userName\": \"str\",\r\n    \"password\": \"string1\"\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/users",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "New Request",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": " {\r\n    \"id\": {{id}},\r\n    \"userName\": \"str\",\r\n    \"password\": \"string1\"\r\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/users",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8; v=1.0"
+						},
+						{
+							"key": "Date",
+							"value": "Fri, 13 Sep 2024 11:25:53 GMT"
+						},
+						{
+							"key": "Server",
+							"value": "Kestrel"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "api-supported-versions",
+							"value": "1.0"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"id\": 225,\n    \"userName\": \"str\",\n    \"password\": \"string1\"\n}"
+				}
+			]
+		},
+		{
+			"name": "return specific user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Response time is less than 200ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+							"});\r",
+							"pm.test(\"return an opject\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.be.an('object');\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{URL}}/users/1",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"users",
+						"1"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "New Request",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/users/1",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"users",
+								"1"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8; v=1.0"
+						},
+						{
+							"key": "Date",
+							"value": "Fri, 13 Sep 2024 11:49:25 GMT"
+						},
+						{
+							"key": "Server",
+							"value": "Kestrel"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "api-supported-versions",
+							"value": "1.0"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"id\": 1,\n    \"userName\": \"User 1\",\n    \"password\": \"Password1\"\n}"
+				}
+			]
+		},
+		{
+			"name": "update specific user",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"let newid=Math.floor(Math.random()*1000)\r",
+							"pm.collectionVariables.set(\"newid\", newid);\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"response is opject contain valid items with valid data\", function () {\r",
+							"      // Parse the response as JSON\r",
+							"     var jsonData = pm.response.json();\r",
+							"     //check the response is opject\r",
+							"     pm.expect(jsonData).to.be.an('object');\r",
+							"\r",
+							"        // Check if the object has the expected properties\r",
+							"        pm.expect(jsonData).to.have.property(\"id\");\r",
+							"        pm.expect(jsonData).to.have.property(\"userName\");\r",
+							"        pm.expect(jsonData).to.have.property(\"password\");\r",
+							"          // Ensure that id is a number and is an integer\r",
+							"        pm.expect(jsonData.id).to.be.a('number');\r",
+							"        pm.expect(jsonData.id % 1).to.eql(0); // Check that id is an integer\r",
+							"        \r",
+							"        // Ensure that name is a string\r",
+							"        pm.expect(jsonData.userName).to.be.a('string');\r",
+							"        //Ensure that passWord is a string\r",
+							"        pm.expect(jsonData.password).to.be.a('string');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {\r\n    \"id\": {{newid}},\r\n    \"userName\": \"newstring\",\r\n    \"password\": \"newstring\"\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/users/3",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"users",
+						"3"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "New Request",
+					"originalRequest": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": " {\r\n    \"id\": {{newid}},\r\n    \"userName\": \"newstring\",\r\n    \"password\": \"newstring\"\r\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/users/3",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"users",
+								"3"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8; v=1.0"
+						},
+						{
+							"key": "Date",
+							"value": "Fri, 13 Sep 2024 12:27:04 GMT"
+						},
+						{
+							"key": "Server",
+							"value": "Kestrel"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "api-supported-versions",
+							"value": "1.0"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"id\": 909,\n    \"userName\": \"newstring\",\n    \"password\": \"newstring\"\n}"
+				}
+			]
+		},
+		{
+			"name": "delete specific user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Response time is less than 500ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{URL}}/users/5",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"users",
+						"5"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "New Request",
+					"originalRequest": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/users/5",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"users",
+								"5"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "plain",
+					"header": [
+						{
+							"key": "Content-Length",
+							"value": "0"
+						},
+						{
+							"key": "Date",
+							"value": "Fri, 13 Sep 2024 12:31:36 GMT"
+						},
+						{
+							"key": "Server",
+							"value": "Kestrel"
+						},
+						{
+							"key": "api-supported-versions",
+							"value": "1.0"
+						}
+					],
+					"cookie": [],
+					"body": null
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "id",
+			"value": ""
+		},
+		{
+			"key": "requestData",
+			"value": ""
+		},
+		{
+			"key": "requestBody",
+			"value": ""
+		},
+		{
+			"key": "newid",
+			"value": ""
+		}
+	]
+}
